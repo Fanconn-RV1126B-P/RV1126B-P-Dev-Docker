@@ -48,7 +48,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     # Additional utilities
     vim \
-    screen \
+    tmux \
     locales \
     && rm -rf /var/lib/apt/lists/*
 
