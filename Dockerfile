@@ -29,7 +29,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bc \
     gettext \
     file \
-    fakeroot \
     # Archive tools
     unzip \
     bzip2 \
@@ -38,6 +37,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gawk \
     cpio \
     xxd \
+    # fakeroot-tcp (fakeroot has semaphore issues in Docker)
+    fakeroot-tcp \
     # Version control & download
     git \
     wget \
