@@ -4,6 +4,8 @@ Reproducible Docker build environment for the Rockchip RV1126B-P Linux SDK.
 
 **Architecture:** Build tools in Docker, SDK mounted from host
 
+**Compatible with:** [SDK v1.1.0](https://github.com/Fanconn-RV1126B-P/RV1126B-P-SDK/releases/tag/v.1.1.0-setup-build-env)
+
 ## Features
 
 - ✅ Based on Ubuntu 24.04 LTS (GCC 13.x - avoids libffi build errors)
@@ -350,7 +352,7 @@ cd /workspace/rv1126b_linux6.1_sdk_v1.1.0
 ## Related Links
 
 - [SDK Repository](https://github.com/Fanconn-RV1126B-P/RV1126B-P-SDK)
-- [SDK Release v1.1.0](https://github.com/Fanconn-RV1126B-P/RV1126B-P-SDK/releases/tag/v1.1.0)
+- [SDK Release v1.1.0](https://github.com/Fanconn-RV1126B-P/RV1126B-P-SDK/releases/tag/v.1.1.0-setup-build-env) - **Tested and compatible**
 - [Rockchip Documentation](https://github.com/Fanconn-RV1126B-P/RV1126B-P-SDK/tree/main/rv1126b_linux6.1_sdk_v1.1.0/docs)
 
 ## License
