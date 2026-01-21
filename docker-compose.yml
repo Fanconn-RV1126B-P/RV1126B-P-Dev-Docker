@@ -8,6 +8,10 @@ services:
         GROUP_ID: ${GID:-1000}
     image: rv1126b-builder:latest
     container_name: rv1126b-build-env
+    cap_add:
+      - SYS_ADMIN
+      - IPC_LOCK
+    ipc: host
     volumes:
       # Mount SDK directory from host (REQUIRED)
       # Default: ../RV1126B-P-SDK (assumes SDK is in parallel directory)
