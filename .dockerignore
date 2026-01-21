@@ -1,0 +1,18 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+LICENSE
+
+# Build artifacts
+*.log
+.cache/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~

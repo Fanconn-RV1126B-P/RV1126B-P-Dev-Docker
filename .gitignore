@@ -1,0 +1,11 @@
+# Build artifacts
+*.log
+
+# Environment files
+.env
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~

@@ -1,0 +1,26 @@
+services:
+  rv1126b-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: ${UID:-1000}
+        GROUP_ID: ${GID:-1000}
+    image: rv1126b-builder:latest
+    container_name: rv1126b-build-env
+    volumes:
+      # Mount SDK directory from host (REQUIRED)
+      # Default: ../RV1126B-P-SDK (assumes SDK is in parallel directory)
+      - ${SDK_PATH:-../RV1126B-P-SDK}:/workspace:rw
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    environment:
+      - TZ=Asia/Hong_Kong
+      - LANG=en_US.UTF-8
+    # Optional: Limit resources
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '8'
+    #       memory: 16G
