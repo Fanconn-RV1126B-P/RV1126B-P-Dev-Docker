@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bc \
     gettext \
     file \
+    fakeroot \
     # Archive tools
     unzip \
     bzip2 \
@@ -37,8 +38,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gawk \
     cpio \
     xxd \
-    # fakeroot-tcp (fakeroot has semaphore issues in Docker)
-    fakeroot-tcp \
     # Version control & download
     git \
     wget \
@@ -98,6 +97,9 @@ RUN (groupadd -g ${GROUP_ID} builder 2>/dev/null || true) && \
 # Switch to non-root user (use builder if created, otherwise use ubuntu/existing user)
 USER ${USER_ID}
 WORKDIR /workspace
+
+# Environment variables to help fakeroot work in Docker
+ENV FAKEROOTDONTTRYCHOWN=1
 
 # Print environment info on container start
 CMD ["bash", "-c", "echo '========================================' && \
