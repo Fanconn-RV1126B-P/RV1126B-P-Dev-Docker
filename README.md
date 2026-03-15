@@ -68,9 +68,19 @@ docker compose run --rm rv1126b-builder
 
 # Or specify custom SDK path
 SDK_PATH=/path/to/RV1126B-P-SDK docker compose run --rm rv1126b-builder
+
+# Or specify the host workspace path to mount at /workspace-host in the container
+HOST_RV1126BP_PATH=.. docker compose run --rm rv1126b-builder
 ```
 
 **Note:** Container runs as root to bypass fakeroot semaphore issues. After build completes, you may need to fix file permissions (see Troubleshooting section).
+
+The container now exposes:
+
+- `/workspace` → SDK root (default: `../RV1126B-P-SDK`)
+- `/workspace-host` → full host workspace tree (default: `..`)
+
+This lets you build the SDK from `/workspace` while also accessing repositories like the camera pipeline from `/workspace-host/RV1126B-P-Camera-Pipeline`.
 
 ### Step 4: Build the Firmware (Inside Container)
 
@@ -163,6 +173,11 @@ docker compose run --rm rv1126b-builder bash -c "cd rv1126b_linux6.1_sdk_v1.1.0 
 SDK_PATH=/mnt/data/RV1126B-P-SDK docker compose run --rm rv1126b-builder
 ```
 
+### Use a Different Host Workspace Path
+```bash
+HOST_RV1126BP_PATH=../some-other-workspace docker compose run --rm rv1126b-builder
+```
+
 ### Keep Container Running (for Development)
 ```bash
 # Start in background
@@ -220,6 +235,12 @@ tmux kill-session -t build
 # Inside Docker container:
 /workspace/                    # Mounted from ~/RV1126B-P-SDK
 └── rv1126b_linux6.1_sdk_v1.1.0/
+
+/workspace-host/               # Full host workspace mounted into container
+├── RV1126B-P-Camera-Pipeline/
+├── RV1126B-P-SDK/
+├── RV1126B-P-SDK-Docker/
+└── ...
 ```
 
 ## Build Logs & Outputs

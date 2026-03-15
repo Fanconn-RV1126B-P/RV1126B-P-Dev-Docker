@@ -15,6 +15,9 @@ services:
       # Mount SDK directory from host (REQUIRED)
       # Default: ../RV1126B-P-SDK (assumes SDK is in parallel directory)
       - ${SDK_PATH:-../RV1126B-P-SDK}:/workspace:rw
+      # Mount the full parent workspace from host for docs, apps, and related repos
+      # Default: .. (assumes this repo lives inside the RV1126B-P workspace root)
+      - ${HOST_RV1126BP_PATH:-..}:/workspace-host:rw
     working_dir: /workspace
     stdin_open: true
     tty: true

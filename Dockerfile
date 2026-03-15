@@ -110,11 +110,15 @@ CMD ["bash", "-c", "echo '========================================' && \
     echo 'Python2:  '$(python2.7 --version 2>&1) && \
     echo 'lz4:      '$(lz4 --version 2>&1 | head -1) && \
     echo '========================================' && \
-    echo 'SDK should be mounted at /workspace' && \
+    echo 'SDK is mounted at:        /workspace' && \
+    echo 'Host workspace mounted at: /workspace-host' && \
     echo '' && \
     echo 'Quick Start:' && \
     echo '  cd rv1126b_linux6.1_sdk_v1.1.0' && \
     echo '  ./build.sh lunch    # Select option 9' && \
     echo '  ./build.sh          # Build firmware' && \
+    echo '' && \
+    echo 'Other repos:' && \
+    echo '  cd /workspace-host/RV1126B-P-Camera-Pipeline' && \
     echo '========================================' && \
     exec bash"]
