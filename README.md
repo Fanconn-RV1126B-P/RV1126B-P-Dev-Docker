@@ -69,7 +69,7 @@ cd RV1126B-P-Dev-Docker
 docker compose build
 
 # Or specify custom version tag
-IMAGE_TAG=v1.0.0 docker compose build
+IMAGE_TAG=v0.2.0 docker compose build
 ```
 
 **Build time:** ~5-10 minutes (downloads and compiles Python 2.7.18 and lz4)
