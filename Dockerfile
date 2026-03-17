@@ -1,8 +1,8 @@
 FROM ubuntu:24.04
 
 LABEL maintainer="frankie.yuen@me.com"
-LABEL description="Build environment for Rockchip RV1126B-P SDK v1.1.0"
-LABEL version="1.0"
+LABEL description="Build environment for Rockchip RV1126B-P SDK v1.1.0 (Buildroot + Debian)"
+LABEL version="1.1"
 
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -50,7 +50,40 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     tmux \
     locales \
+    # ── Debian rootfs build dependencies ──────────────────────────────────
+    # Required by check-debian.sh and the live-build / debootstrap pipeline.
+    sudo \
+    qemu-user-static \
+    binfmt-support \
+    debootstrap \
+    # e2fsprogs: mke2fs needs the -d flag (pack rootfs into ext4 image).
+    # Ubuntu 24.04 ships a new enough version; pin to ensure it stays current.
+    e2fsprogs \
     && rm -rf /var/lib/apt/lists/*
+
+# ── live-build: pinned to the version the SDK's check-debian.sh requires ──
+# Needs /usr/share/live/build/data/debian-cd/bookworm to exist.
+# Ubuntu 24.04's packaged live-build is too old, so we install from source.
+RUN apt-get update && apt-get remove -y live-build 2>/dev/null || true && \
+    git clone https://salsa.debian.org/live-team/live-build.git \
+        --depth 1 -b debian/1%20230131 /tmp/live-build && \
+    cd /tmp/live-build && \
+    rm -rf manpages/po/ && \
+    make install -j$(nproc) && \
+    rm -rf /tmp/live-build && \
+    rm -rf /var/lib/apt/lists/*
+
+# ── debootstrap: ensure bookworm script is present ────────────────────────
+# Ubuntu 24.04's debootstrap supports bookworm, but verify and upgrade if not.
+RUN if [ ! -e "/usr/share/debootstrap/scripts/bookworm" ]; then \
+        apt-get update && apt-get remove -y debootstrap && \
+        git clone https://salsa.debian.org/installer-team/debootstrap.git \
+            --depth 1 -b debian/1.0.123+deb11u2 /tmp/debootstrap && \
+        cd /tmp/debootstrap && \
+        make install -j$(nproc) && \
+        rm -rf /tmp/debootstrap && \
+        rm -rf /var/lib/apt/lists/*; \
+    fi
 
 # Set locale
 RUN locale-gen en_US.UTF-8
