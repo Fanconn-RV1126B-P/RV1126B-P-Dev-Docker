@@ -28,6 +28,16 @@ Reproducible Docker build environment for the Rockchip RV1126B-P Linux SDK.
 - 50GB+ free disk space (20GB SDK + 30GB build outputs)
 - 8GB+ RAM recommended (16GB ideal)
 
+### Host OS compatibility
+
+| Host OS | Support | Notes |
+|---|---|---|
+| **Ubuntu 22.04 / 24.04** | ✅ Recommended | Native Linux — best performance, no caveats |
+| **Mac (Docker Desktop)** | ⚠️ Works with caveats | Volume mounts are significantly slower; root-owned `binary/` files written into the Mac-mounted volume may fail to clean up — use `docker exec` to `rm -rf` from inside the container |
+| **Windows (Docker Desktop + WSL2)** | ⚠️ Works with caveats | Keep repos inside the WSL2 filesystem (e.g. `~/...`), **not** under `/mnt/c/...` — Windows-mounted volumes have severe performance and ownership issues with root-owned chroot files |
+
+> **Recommendation:** Use a native **Ubuntu Linux** host. The build creates root-owned chroot directories, mounts `binfmt_misc`, and runs privileged containers — all of which work seamlessly on Linux and add complexity on Mac/Windows.
+
 ## Quick Start
 
 ### Step 0: Get the SDK
