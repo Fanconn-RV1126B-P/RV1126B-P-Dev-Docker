@@ -2,7 +2,7 @@ FROM ubuntu:24.04
 
 LABEL maintainer="frankie.yuen@me.com"
 LABEL description="Build environment for Rockchip RV1126B-P SDK v1.1.0 (Buildroot + Debian)"
-LABEL version="1.1"
+LABEL version="1.2"
 
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -111,6 +111,15 @@ RUN git clone https://github.com/lz4/lz4.git --depth 1 -b v1.9.4 && \
     cd /tmp && \
     rm -rf lz4
 
+# Install afptool-rs v1.2.0 — Rockchip RKFW/RKAF firmware inspector/unpacker
+# Required for RV1126B chip code 0x46 (older afptool reports "unknown chip")
+RUN curl -L "https://github.com/suyulin/apftool-rs/releases/download/v1.2.0/afptool-rs-linux-x86_64.zip" \
+    -o /tmp/afptool-rs.zip && \
+    unzip /tmp/afptool-rs.zip -d /tmp/afptool-rs-tmp && \
+    mv /tmp/afptool-rs-tmp/afptool-rs-linux-x86_64 /usr/local/bin/afptool-rs && \
+    chmod +x /usr/local/bin/afptool-rs && \
+    rm -rf /tmp/afptool-rs.zip /tmp/afptool-rs-tmp
+
 # Update dynamic linker cache
 RUN ldconfig
 
@@ -142,6 +151,7 @@ CMD ["bash", "-c", "echo '========================================' && \
     echo 'GCC:      '$(gcc --version | head -1) && \
     echo 'Python2:  '$(python2.7 --version 2>&1) && \
     echo 'lz4:      '$(lz4 --version 2>&1 | head -1) && \
+    echo 'afptool-rs: '$(afptool-rs --version 2>&1 | head -1) && \
     echo '========================================' && \
     echo 'SDK is mounted at:        /workspace' && \
     echo 'Host workspace mounted at: /workspace-host' && \

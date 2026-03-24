@@ -8,6 +8,7 @@ Reproducible Docker build environment for the Rockchip RV1126B-P Linux SDK.
 
 ## Change Log
 
+- **RV1126BP-63**: Added afptool-rs v1.2.0 for Rockchip RKFW/RKAF firmware inspection and unpacking (required for RV1126B chip code 0x46).
 - **RV1126BP-2**: Added full host workspace mount support via `HOST_RV1126BP_PATH` (mounted at `/workspace-host`) and documented usage in this guide.
 
 ## Features
@@ -16,6 +17,7 @@ Reproducible Docker build environment for the Rockchip RV1126B-P Linux SDK.
 - ✅ All build dependencies pre-installed
 - ✅ Python 2.7.18 (required by SDK build system)
 - ✅ lz4 v1.9.4 (compression utility)
+- ✅ afptool-rs v1.2.0 (unpack/inspect Rockchip RKFW + RKAF firmware images)
 - ✅ tmux terminal multiplexer (persistent build sessions with scrollback)
 - ✅ Runs as root (bypasses fakeroot semaphore issues in Docker)
 - ✅ Privileged mode enabled (full host kernel access)
@@ -65,11 +67,11 @@ cd RV1126B-P-Dev-Docker
 ### Step 2: Build the Docker Image
 
 ```bash
-# Build with default tag (v0.1.0)
+# Build with default tag (v1.2.0)
 docker compose build
 
 # Or specify custom version tag
-IMAGE_TAG=v0.2.0 docker compose build
+IMAGE_TAG=v1.2.0 docker compose build
 ```
 
 **Build time:** ~5-10 minutes (downloads and compiles Python 2.7.18 and lz4)
@@ -227,6 +229,35 @@ Ctrl+B, then [
 tmux kill-session -t build
 ```
 
+## Unpacking Rockchip Firmware
+
+Use `afptool-rs` (available inside the container) to inspect and unpack complete Rockchip firmware images (e.g. `update.img` from Fanconn). The process is two steps — an outer RKFW container wraps an inner RKAF image.
+
+> **Note:** The RV1126B chip uses code `0x46`. Older `afptool` binaries report this as "unknown chip" and refuse to extract. `afptool-rs v1.2.0` handles it correctly.
+
+### Step 1 — Unpack the outer RKFW container
+
+```bash
+afptool-rs unpack update.img ./unpacked/
+# Produces: BOOT (bootloader blob), embedded-update.img (~3.8GB inner RKAF image)
+```
+
+### Step 2 — Unpack the inner RKAF image to partition files
+
+```bash
+afptool-rs unpack ./unpacked/embedded-update.img ./unpacked/partitions/
+# Produces: rootfs.img, boot.img, oem.img, uboot.img, recovery.img, userdata.img, etc.
+```
+
+### Inspect a partition
+
+```bash
+# Mount rootfs read-only to inspect its contents
+sudo mount -o ro,loop ./unpacked/partitions/rootfs.img /mnt/rootfs
+ls /mnt/rootfs/usr/lib/ | grep -E "rockit|rkmpp|rkaiq"
+sudo umount /mnt/rootfs
+```
+
 ## Directory Structure
 
 ```
@@ -378,7 +409,7 @@ cd /workspace/rv1126b_linux6.1_sdk_v1.1.0
 - **tmux:** Latest (persistent terminal sessions)
 - **Container User:** root (UID 0) - bypasses fakeroot semaphore issues
 - **Container Mode:** Privileged (full host kernel access)
-- **Image Tag:** Configurable via IMAGE_TAG env var (default: v0.1.0)
+- **Image Tag:** Configurable via IMAGE_TAG env var (default: v1.2.0)
 - **Locale:** en_US.UTF-8
 - **Timezone:** Asia/Hong_Kong (configurable)
 - **Image Size:** ~2GB (build tools only)

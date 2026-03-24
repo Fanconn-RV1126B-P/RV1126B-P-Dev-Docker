@@ -6,7 +6,7 @@ services:
       args:
         USER_ID: ${UID:-1000}
         GROUP_ID: ${GID:-1000}
-    image: rv1126b-builder:${IMAGE_TAG:-v0.2.0}
+    image: rv1126b-builder:${IMAGE_TAG:-v1.2.0}
     container_name: rv1126b-build-env
     privileged: true
     # Run as root to avoid fakeroot semaphore issues
